@@ -20,6 +20,7 @@ find_package(ament_cmake REQUIRED)		# cpp (optional)
 find_package(rclcpp REQUIRED)			# cpp (optional)
 find_package(ament_cmake_python REQUIRED)   	# python (optional)
 find_package(rclpy REQUIRED)                	# python (optional)
+find_package(carla_msgs REQUIRED)		# carla_msgs (optional)
 ######################################################
 
 # Install Python Module
@@ -28,6 +29,8 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   scripts/dummy_script.py
+  scripts/carla_service.py
+  scripts/bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -48,6 +51,7 @@ install(TARGETS
 ################ INSTALL LAUNCH, ETC #################
 install(DIRECTORY
   # add directories here
+  data launch
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()
