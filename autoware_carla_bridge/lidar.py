@@ -25,6 +25,7 @@ class LidarExtended(object):
             return
             
         pointcloud_ex = PointCloud2()
+        pointcloud_ex.header.frame_id = self.input_pointcloud.header.frame_id
         pointcloud_ex.header.stamp = self.node.get_clock().now().to_msg()
         pointcloud_ex.header.stamp.sec = self.input_pointcloud.header.stamp.sec
         pointcloud_ex.header.stamp.nanosec = self.input_pointcloud.header.stamp.nanosec
