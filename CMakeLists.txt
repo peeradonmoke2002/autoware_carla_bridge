@@ -51,7 +51,7 @@ install(TARGETS
 ################ INSTALL LAUNCH, ETC #################
 install(DIRECTORY
   # add directories here
-  data launch
+  data launch config rviz
   DESTINATION share/${PROJECT_NAME})
 
 ament_package()

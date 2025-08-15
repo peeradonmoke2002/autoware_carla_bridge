@@ -11,23 +11,25 @@ from autoware_carla_bridge.gear_mode import GearMode
 from autoware_carla_bridge.lidar import LidarExtended
 from autoware_carla_bridge.steering_status import SteeringStatus
 from autoware_carla_bridge.velocity_state_report import VelocityStateReport
+from autoware_carla_bridge.gnss_pose_cov import GnssCov
 
 class AutowareCarlaBridge(Node):
     def __init__(self):
         super().__init__('autoware_carla_bridge')
         self.get_logger().info("Autoware Carla Bridge Node has been started")
-        package_path = get_package_share_directory('autoware_carla_bridge')
-        self.declare_parameter('csv_path_steer_map',
-                               package_path + '/data/carla_tesla_model3/steer_map.csv')
-        csv_path_steer_map = self.get_parameter(
-            'csv_path_steer_map').get_parameter_value().string_value
+        # package_path = get_package_share_directory('autoware_carla_bridge')
+        # self.declare_parameter('csv_path_steer_map',
+        #                        package_path + '/data/carla_tesla_model3/steer_map.csv')
+        # csv_path_steer_map = self.get_parameter(
+        #     'csv_path_steer_map').get_parameter_value().string_value
         self.lidar_extended = LidarExtended(self)
         self.actuation_status = ActuationStatus(self)
-        self.control_command = ControlCommand(self, csv_path_steer_map)
+        self.control_command = ControlCommand(self)
         self.control_mode = ControlMode(self)
         self.gear_mode = GearMode(self)
         self.steering_status = SteeringStatus(self)
         self.velocity_state_report = VelocityStateReport(self)
+        self.gnss_cov = GnssCov(self)
         hz = 1/500 # 500 hz
         self.create_timer(hz, self.timer_callback) 
         
@@ -39,6 +41,7 @@ class AutowareCarlaBridge(Node):
         self.gear_mode.update()
         self.steering_status.update()
         self.velocity_state_report.update()
+        self.gnss_cov.update()
 
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")
