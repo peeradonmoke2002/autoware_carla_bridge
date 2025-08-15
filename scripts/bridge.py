@@ -12,6 +12,7 @@ from autoware_carla_bridge.lidar import LidarExtended
 from autoware_carla_bridge.steering_status import SteeringStatus
 from autoware_carla_bridge.velocity_state_report import VelocityStateReport
 from autoware_carla_bridge.gnss_pose_cov import GnssCov
+from autoware_carla_bridge.odom import Odom
 
 class AutowareCarlaBridge(Node):
     def __init__(self):
@@ -30,6 +31,7 @@ class AutowareCarlaBridge(Node):
         self.steering_status = SteeringStatus(self)
         self.velocity_state_report = VelocityStateReport(self)
         self.gnss_cov = GnssCov(self)
+        self.odom = Odom(self)
         hz = 1/500 # 500 hz
         self.create_timer(hz, self.timer_callback) 
         
@@ -42,6 +44,7 @@ class AutowareCarlaBridge(Node):
         self.steering_status.update()
         self.velocity_state_report.update()
         self.gnss_cov.update()
+        self.odom.update()
 
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")

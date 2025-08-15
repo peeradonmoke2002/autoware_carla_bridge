@@ -29,7 +29,8 @@ def generate_launch_description():
                 ('~/output/control', '/carla/ego_vehicle/vehicle_control_cmd'),
                 ('~/output/lidar_ex', '/sensing/lidar/top/pointcloud_raw_ex'),
                 ('~/input/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
-                ('~/output/gnss_cov', '/sensing/gnss/pose_with_covariance')
+                ('~/output/gnss_cov', '/sensing/gnss/pose_with_covariance'),
+                ('~/output/odometry', '/carla/ego_vehicle/odometry'),
             ],
         ),
         
