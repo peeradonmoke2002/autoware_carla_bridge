@@ -2,9 +2,28 @@
 
 ## Installation
 
-Comming soon...
+1. Clone the repository into your ROS2 workspace src directory.
+
+``` bash
+cd ~/av_ws/src
+git clone https://github.com/peeradonmoke2002/autoware_carla_bridge.git
+```
+2. Install dependencies
+```bash
+sudo apt update && sudo apt upgrade
+rosdep update
+rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+```
+3. Build the workspace
+``` bash
+cd ~/av_ws
+colcon build --symlink-install
+```
 
 ## Usage
+> [!IMPORTANT]
+> Ensure you have installed the CARLA server.
+> If not installed, follow the [CARLA installation guide](https://github.com/peeradonmoke2002/Carlar_install.git) at branch ue4.
 
 1. Launch CARLA simulator on your machine or another machine.
 
