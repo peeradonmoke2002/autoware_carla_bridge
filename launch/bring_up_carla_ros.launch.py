@@ -6,7 +6,7 @@ def generate_launch_description():
     ld = launch.LaunchDescription([
         launch.actions.DeclareLaunchArgument(
             name='host',
-            default_value='10.61.2.24',
+            default_value='localhost',
             description='IP of the CARLA server'
         ),
         launch.actions.DeclareLaunchArgument(

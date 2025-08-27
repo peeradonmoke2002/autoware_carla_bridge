@@ -12,7 +12,7 @@ def generate_launch_description():
 
     rviz_file = os.path.join(
         get_package_share_directory(pkg),
-        'rviz','carlar_ros.rviz'
+        'rviz','autoware_view.rviz'
     )
 
     carla_bridge = IncludeLaunchDescription(
@@ -62,6 +62,6 @@ def generate_launch_description():
     ld.add_action(carla_bridge)
     ld.add_action(spawn_entity)
     ld.add_action(manual_control)
-    # ld.add_action(rviz)  # Uncomment to launch RViz automatical
+    # ld.add_action(rviz)  
     
     return ld
