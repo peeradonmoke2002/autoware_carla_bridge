@@ -2,7 +2,6 @@
 
 import rclpy
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 from rclpy.node import Node
 from autoware_carla_bridge.actuation_status import ActuationStatus
 from autoware_carla_bridge.control_command import ControlCommand
@@ -13,17 +12,14 @@ from autoware_carla_bridge.steering_status import SteeringStatus
 from autoware_carla_bridge.velocity_state_report import VelocityStateReport
 from autoware_carla_bridge.gnss_pose_cov import GnssCov
 from autoware_carla_bridge.odom import Odom
-from autoware_carla_bridge.cam import Cam
+from autoware_carla_bridge.cam_front import CamFront
+from autoware_carla_bridge.cam_view import CamView
+
 
 class AutowareCarlaBridge(Node):
     def __init__(self):
         super().__init__('autoware_carla_bridge')
         self.get_logger().info("Autoware Carla Bridge Node has been started")
-        # package_path = get_package_share_directory('autoware_carla_bridge')
-        # self.declare_parameter('csv_path_steer_map',
-        #                        package_path + '/data/carla_tesla_model3/steer_map.csv')
-        # csv_path_steer_map = self.get_parameter(
-        #     'csv_path_steer_map').get_parameter_value().string_value
         self.lidar_extended = LidarExtended(self)
         self.actuation_status = ActuationStatus(self)
         self.control_command = ControlCommand(self)
@@ -33,7 +29,8 @@ class AutowareCarlaBridge(Node):
         self.velocity_state_report = VelocityStateReport(self)
         self.gnss_cov = GnssCov(self)
         self.odom = Odom(self)
-        self.cam = Cam(self)
+        self.cam = CamFront(self)
+        self.cam_view = CamView(self)
         hz = 1/500 # 500 hz
         self.create_timer(hz, self.timer_callback) 
         
@@ -48,6 +45,7 @@ class AutowareCarlaBridge(Node):
         self.gnss_cov.update()
         self.odom.update()
         self.cam.update()
+        self.cam_view.update()
 
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")

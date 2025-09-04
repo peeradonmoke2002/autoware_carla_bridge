@@ -19,18 +19,7 @@ class ControlCommand(object):
         self.in_cmd = None  # Initialize to None
         self.steer_curve = None
         self.current_vel = None
-        
-        # Load steering map from CSV
-        # try:
-        #     with open(steer_map_path, newline='') as csvfile:
-        #         csv_reader = csv.reader(csvfile)
-        #         self._tire_angle = np.float32(next(csv_reader))
-        #         self._steer_cmd = np.float32(next(csv_reader))
-        #         self.node.get_logger().info(f"Loaded steering map from {steer_map_path}")
-        # except Exception as e:
-        #     self.node.get_logger().error(f"Failed to load steering map: {e}")
-
-            
+    
         self._control_command_subscriber = self.node.create_subscription(
             ActuationCommandStamped, '~/input/actuation',
             self.control_callback, 1)
@@ -106,26 +95,6 @@ class ControlCommand(object):
         msg.steer = steer
         self._vehicle_control_command_publisher.publish(msg)
     
-    # def _convert_from_tire_to_steer(self, tire_angle) -> float:
-    #     nearest_idx = (np.abs(self._tire_angle - tire_angle)).argmin()
-    #     return float(self._steer_cmd[nearest_idx])
-
-    # def update(self):
-    #     # Skip if no command has been received yet
-    #     if self.in_cmd is None:
-    #         return
-            
-    #     steer = self._convert_from_tire_to_steer(self.in_cmd.actuation.steer_cmd)
-    #     output_control_command = CarlaEgoVehicleControl()
-    #     output_control_command.header.stamp = self.node.get_clock().now().to_msg()
-    #     output_control_command.throttle = self.in_cmd.actuation.accel_cmd
-    #     output_control_command.brake = self.in_cmd.actuation.brake_cmd
-    #     output_control_command.manual_gear_shift = False
-    #     output_control_command.steer = steer
-    #     self._vehicle_control_command_publisher.publish(output_control_command)
-
-        
-
     def destroy(self):
         self.node.get_logger().info("Destroying ControlCommand subscriber")
         self._vehicle_control_command_publisher.destroy()

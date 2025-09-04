@@ -1,47 +1,69 @@
-from ament_index_python.packages import get_package_share_directory
 import os
-import launch
-import launch_ros.actions
-
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, Shutdown
+from launch.substitutions import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 
 def generate_launch_description():
-    ld = launch.LaunchDescription([
 
-        launch_ros.actions.Node(
-            package='autoware_carla_bridge',
-            executable='bridge.py',
-            name='bridge',
-            on_exit=launch.actions.Shutdown(),
-            parameters=[
-                {
-                    'use_sim_time': True
-                }
-            ],
-            remappings=[
+    autoware_carlar_bridge = Node(
+        package='autoware_carla_bridge',
+        executable='bridge.py',
+        name='bridge',
+        output='screen',
+        on_exit=Shutdown(),
+        parameters=[{'use_sim_time': True}],
+        remappings=[
                 ('~/input/odometry', '/carla/ego_vehicle/odometry'),
                 ('~/input/status', '/carla/ego_vehicle/vehicle_status'),
                 ('~/input/steering', '/carla/ego_vehicle/vehicle_steering'),
                 ('~/input/actuation', '/control/command/actuation_cmd'),
                 ('~/input/lidar', '/sensing/lidar/top/pointcloud_raw'),
-                ('~/input/image', '/sensing/camera/traffic_light/image_raw'),
-                ('~/input/camera_info', '/sensing/camera/traffic_light/camera_info'),
+                ('~/input/image', '/carla/ego_vehicle/rgb_front/image'),
+                ('~/input/camera_info', '/carla/ego_vehicle/rgb_front/camera_info'),
+                ('~/input/rgb_view', '/carla/ego_vehicle/rgb_view/image'),
+                ('~/input/camera_info_view', '/carla/ego_vehicle/rgb_view/camera_info'),
+                ('~/input/gnss_cov', '/carla/ego_vehicle/odometry'),
                 ('~/output/velocity_status', '/vehicle/status/velocity_status'),
                 ('~/output/steering_status', '/vehicle/status/steering_status'),
                 ('~/output/actuation_status', '/vehicle/status/actuation_status'),
                 ('~/output/control', '/carla/ego_vehicle/vehicle_control_cmd'),
-                ('~/output/lidar_ex', '/sensing/lidar/top/pointcloud_raw'),
-                ('~/input/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
+                ('~/output/lidar_ex', '/sensing/lidar/top/pointcloud_raw_ex'),
                 ('~/output/gnss_cov', '/sensing/gnss/pose_with_covariance'),
                 ('~/output/odometry', '/carla/ego_vehicle/odometry'),
                 ('~/output/image', '/sensing/camera/traffic_light/image_raw'),
                 ('~/output/camera_info', '/sensing/camera/traffic_light/camera_info'),
+                ('~/output/rgb_view', '/sensing/camera/view/rgb_view'),
+                ('~/output/camera_info_view', '/sensing/camera/view/camera_info_view'),
+        ],
+    )
 
-            ],
-        ),
-        
-    ])
+    # Include Autoware stack but **disable** physical sensing drivers in CARLA
+    autoware_vehicle = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('autoware_carla_bridge'),
+                'launch', 'autoware_vehicle.launch.py'
+            )
+        )
+    )
+
+    ld = LaunchDescription()
+    ld.add_action(autoware_carlar_bridge)
+    ld.add_action(autoware_vehicle)
     return ld
 
 
-if __name__ == '__main__':
-    generate_launch_description()
+
+
+
+
+
+
+
+
+
+
+

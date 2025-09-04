@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- Common Arguments -->
+  <arg name="map_path" default="$(env HOME)/autoware_map/Town01" description="point cloud and lanelet2 map directory path"/>
+
+  <arg name="use_sim_time" default="true"/>
+  <arg name="vehicle_model" default="carla_tesla" description="vehicle model name"/>
+  <arg name="sensor_model" default="awsim_sensor_kit" description="sensor model name"/>
+  <arg name="vehicle_id" default="$(env VEHICLE_ID default)" description="vehicle specific ID"/>
+  <arg name="data_path" default="$(env HOME)/autoware_data" description="packages data and artifacts directory path"/>
+  <arg name="launch_vehicle" default="true"/>
+  <arg name="launch_sensing" default="true"/>
+
+
+  <arg name="launch_sensing_driver" default="false" description="launch sensing driver"/>
+  <arg name="launch_vehicle_interface" default="false"/>
+  <arg name="launch_map" default="true" description="launch map"/>
+  <arg name="pointcloud_container_name" default="pointcloud_container"/>
+
+  <!-- Map -->
+  <arg name="lanelet2_map_file" default="lanelet2_map.osm" description="lanelet2 map file name"/>
+  <arg name="pointcloud_map_file" default="pointcloud_map.pcd" description="pointcloud map file name"/>
+  <group if="$(var launch_map)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_map_component.launch.xml"/>
+  </group>
+
+
+
+  <!-- Perception -->
+  <arg name="launch_perception" default="true"/>
+  <arg name="perception_mode" default="camera_lidar_fusion" description="select perception mode. camera_lidar_radar_fusion, camera_lidar_fusion, lidar_radar_fusion, lidar, radar"/>
+  <arg name="traffic_light_recognition/camera_namespaces" default="[traffic_light]"/>
+  <arg name="traffic_light_recognition/use_high_accuracy_detection" default="false" description="enable to use high accuracy detection for traffic light recognition"/>
+
+
+
+  <!-- Pointcloud container -->
+  <include file="$(find-pkg-share autoware_launch)/launch/pointcloud_container.launch.py">
+    <arg name="use_multithread" value="true"/>
+    <arg name="container_name" value="$(var pointcloud_container_name)"/>
+  </include>
+
+
+  <group if="$(var launch_vehicle)">
+    <include file="$(find-pkg-share tier4_vehicle_launch)/launch/vehicle.launch.xml">
+      <arg name="vehicle_model" value="$(var vehicle_model)"/> 
+      <arg name="sensor_model" value="$(var sensor_model)"/>
+      <arg name="vehicle_id" value="$(var vehicle_id)"/>
+      <arg name="launch_vehicle_interface" value="$(var launch_vehicle_interface)"/>
+      <arg name="config_dir" value="$(find-pkg-share $(var sensor_model)_description)/config"/>
+    </include>
+  </group>
+
+  <group if="$(var launch_sensing)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_sensing_component.launch.xml">
+      <arg name="sensor_model" value="$(var sensor_model)"/>
+      <arg name="launch_sensing_driver" value="$(var launch_sensing_driver)"/>
+      <arg name="pointcloud_container_name" value="$(var pointcloud_container_name)"/>
+      <arg name="use_sim_time" value="$(var use_sim_time)"/>
+      <arg name="vehicle_model" value="$(var vehicle_model)"/>
+    </include>
+  </group>
+
+
+  <!-- Perception Component -->
+  <group if="$(var launch_perception)">
+    <include file="$(find-pkg-share autoware_launch)/launch/components/tier4_perception_component.launch.xml">
+      <arg name="mode" value="$(var perception_mode)"/>
+      <arg name="data_path" value="$(var data_path)"/>
+      <arg name="pointcloud_container_name" value="$(var pointcloud_container_name)"/>
+      <arg name="use_sim_time" value="$(var use_sim_time)"/>
+    </include>
+  </group>
+
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="velodyne_top" args="0 0 1 -1.5386 -0.015 0.001 /velodyne_top /velodyne_top_changed "/>
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="imu" args="0 0 1 -3.10519265 -0.015 -3.14059265359 /tamagawa/imu_link /tamagawa/imu_link_changed "/>
+</launch>

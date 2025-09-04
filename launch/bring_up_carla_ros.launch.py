@@ -98,14 +98,28 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                ('/carla/ego_vehicle/rgb_front/camera_info',
-                 '/sensing/camera/traffic_light/camera_info'),
-                ('/carla/ego_vehicle/rgb_front/image', '/sensing/camera/traffic_light/image_raw'),
+                # ('/carla/ego_vehicle/rgb_front/camera_info',
+                #  '/sensing/camera/traffic_light/camera_info'),
+                # ('/carla/ego_vehicle/rgb_front/image', '/sensing/camera/traffic_light/image_raw'),
                 ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
                 ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),
-                ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw'),
-                ('/carla/ego_vehicle/gnss','/sensing/gnss/pose_with_covariance')
+                ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
+                # ('/carla/ego_vehicle/gnss','/sensing/gnss/pose_with_covariance')
             ],
+        ),
+        launch_ros.actions.Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='velodyne_top',
+            output='screen',
+            arguments=['0', '0', '1', '-1.5386', '-0.015', '0.001', 'velodyne_top', 'velodyne_top_changed']
+        ),
+        launch_ros.actions.Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='imu',
+            output='screen',
+            arguments=['0', '0', '1', '-3.10519265', '-0.015', '-3.14059265359', 'tamagawa/imu_link', 'tamagawa/imu_link_changed']
         )
     ])
     return ld
