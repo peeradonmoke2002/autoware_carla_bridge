@@ -23,7 +23,7 @@ def generate_launch_description():
                 ('~/input/lidar', '/sensing/lidar/top/pointcloud_raw'),
                 ('~/input/image', '/carla/ego_vehicle/rgb_front/image'),
                 ('~/input/camera_info', '/carla/ego_vehicle/rgb_front/camera_info'),
-                ('~/input/rgb_view', '/carla/ego_vehicle/rgb_view/image'),
+                ('~/input/image_view', '/carla/ego_vehicle/rgb_view/image'),
                 ('~/input/camera_info_view', '/carla/ego_vehicle/rgb_view/camera_info'),
                 ('~/input/gnss_cov', '/carla/ego_vehicle/odometry'),
                 ('~/output/velocity_status', '/vehicle/status/velocity_status'),
@@ -35,7 +35,7 @@ def generate_launch_description():
                 ('~/output/odometry', '/carla/ego_vehicle/odometry'),
                 ('~/output/image', '/sensing/camera/traffic_light/image_raw'),
                 ('~/output/camera_info', '/sensing/camera/traffic_light/camera_info'),
-                ('~/output/rgb_view', '/sensing/camera/view/rgb_view'),
+                ('~/output/image_view', '/sensing/camera/view/rgb_view'),
                 ('~/output/camera_info_view', '/sensing/camera/view/camera_info_view'),
         ],
     )
