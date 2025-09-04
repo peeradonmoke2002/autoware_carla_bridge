@@ -3,6 +3,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
+
 
 def generate_launch_description():
     pkg = "autoware_carla_bridge"
@@ -24,7 +26,6 @@ def generate_launch_description():
         }.items()
     )
 
-    
     init_pose = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
@@ -38,15 +39,7 @@ def generate_launch_description():
         }.items()
     )
 
-    carla_spawn_service = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/carla_service.launch.py')
-        )
-    )
-
     ld = LaunchDescription()
     ld.add_action(spawn_entity)
     ld.add_action(init_pose)
-    ld.add_action(carla_spawn_service)    
     return ld

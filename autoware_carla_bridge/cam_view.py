@@ -3,11 +3,11 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
-from tf2_ros import Buffer, TransformListener, TransformException, TransformBroadcaster
+from tf2_ros import Buffer, TransformListener, TransformException, TransformBroadcaster, ConnectivityException, ExtrapolationException
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import Image, CameraInfo
 
-class Cam(object):
+class CamView(object):
     def __init__(self, node: Node):
         self.node = node
 
@@ -17,14 +17,14 @@ class Cam(object):
 
         # IO
         self._image_subscriber = self.node.create_subscription(
-            Image, '~/input/image', self.image_callback, 10)
+            Image, '~/input/image_view', self.image_callback, 10)
         self._image_publisher = self.node.create_publisher(
-            Image, '~/output/image', 10)
+            Image, '~/output/image_view', 10)
 
         self._image_info_subscriber = self.node.create_subscription(
-            CameraInfo, '~/input/camera_info', self.image_info_callback, 10)
+            CameraInfo, '~/input/camera_info_view', self.image_info_callback, 10)
         self._image_info_publisher = self.node.create_publisher(
-            CameraInfo, '~/output/camera_info', 10)
+            CameraInfo, '~/output/camera_info_view', 10)
 
         # TF
         self.tf_buffer = Buffer()
@@ -44,7 +44,7 @@ class Cam(object):
             return
         out = Image()
         out.header.stamp = self.input_image.header.stamp
-        out.header.frame_id = "rgb_front"  # new camera frame
+        out.header.frame_id = "view/camera_optical_link"
         out.height = self.input_image.height
         out.width = self.input_image.width
         out.encoding = self.input_image.encoding
@@ -58,7 +58,7 @@ class Cam(object):
             return
         out = CameraInfo()
         out.header.stamp = self.input_camera_info.header.stamp
-        out.header.frame_id = "rgb_front"
+        out.header.frame_id = "view/camera_optical_link"
         out.width = self.input_camera_info.width
         out.height = self.input_camera_info.height
         out.distortion_model = self.input_camera_info.distortion_model
@@ -75,14 +75,19 @@ class Cam(object):
         self.image_update()
         self.image_info_update()
 
-    
-        cam_tf_msg = self.tf_buffer.lookup_transform(
-            "ego_vehicle", "ego_vehicle/rgb_front", Time()
-        )
-        
+        if not self.tf_buffer.can_transform("ego_vehicle", "ego_vehicle/rgb_view", rclpy.time.Time()):
+            return
+
+        try:
+            cam_tf_msg = self.tf_buffer.lookup_transform(
+                "ego_vehicle", "ego_vehicle/rgb_view", rclpy.time.Time()
+            )
+        except (TransformException, ConnectivityException, ExtrapolationException):
+            self.node.get_logger().warn("Transform not available")
+            return
         cam_tf_msg.header.stamp = self.node.get_clock().now().to_msg()
         cam_tf_msg.header.frame_id = "base_link"
-        cam_tf_msg.child_frame_id = "rgb_front"
+        cam_tf_msg.child_frame_id = "view/camera_optical_link"
         cam_tf_msg.transform.translation = cam_tf_msg.transform.translation
         cam_tf_msg.transform.rotation = cam_tf_msg.transform.rotation
         self.tf_broadcaster.sendTransform(cam_tf_msg)

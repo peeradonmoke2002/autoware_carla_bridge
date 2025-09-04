@@ -12,7 +12,7 @@ def generate_launch_description():
 
     rviz_file = os.path.join(
         get_package_share_directory(pkg),
-        'rviz','carlar_ros.rviz'
+        'rviz','autoware_view.rviz'
     )
 
     carla_bridge = IncludeLaunchDescription(
@@ -24,7 +24,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'use_sim_time': 'True',
-            'host': '10.61.2.24',
+            'host': 'localhost',
             'port': '2000',
             'timeout': '10.0',
             'synchronous_mode': 'True',
