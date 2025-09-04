@@ -10,10 +10,6 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     pkg = "autoware_carla_bridge"
 
-    rviz_file = os.path.join(
-        get_package_share_directory(pkg),
-        'rviz','autoware_view.rviz'
-    )
 
     carla_bridge = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -51,17 +47,11 @@ def generate_launch_description():
             }.items()
     )
 
-    # 4) RViz
-    rviz = Node(
-        package='rviz2', executable='rviz2', name='rviz2',
-        arguments=['-d', rviz_file],
-        output='screen'
-    )
+
 
     ld = LaunchDescription()
     ld.add_action(carla_bridge)
     ld.add_action(spawn_entity)
     ld.add_action(manual_control)
-    # ld.add_action(rviz)  
     
     return ld

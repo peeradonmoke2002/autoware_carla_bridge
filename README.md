@@ -29,10 +29,10 @@ colcon build --symlink-install
 
 ``` bash
 cd carla/Dist/CARLA_Shipping_0.9.15-330-gdc9e2976d-dirty/LinuxNoEditor
-./CarlaUE4.sh -prefernvidia -quality-level=Low -nosound -RenderOffScreen
+./CarlaUE4.sh -prefernvidia -quality-level=Low -RenderOffScreen
 ```
  
-2. Launch `bring_up.launch.py`
+2. Launch `bring_up_carla.launch.py`
 
 Before launching, you need to set the carla host ip and port to match your CARLA simulator settings. First go to file `bring_up_carla.launch.py` and change the default value of `host` and `port` and `town` that your want arguments if needed.
 
@@ -54,18 +54,17 @@ launch_arguments = {
 ```
 Optionally, you can change the default RViz configuration file in the same file.
 
-```python
-    rviz_file = os.path.join(
-        get_package_share_directory(pkg),
-        'rviz','autoware_view.rviz' # Change this to your desired RViz config file name
-    )
-
-    # ld.add_action(rviz)   # Uncomment this line to launch RViz automatically 
-```
-
-
 Then launch the file using `ros2 launch` command.
 
 ``` bash
 ros2 launch autoware_carla_bridge bring_up.launch.py
 ```
+
+3. Launch `autoware_carlar_bridge.launch.py`
+
+```bash
+ros2 launch autoware_carla_bridge autoware_carlar_bridge.launch.py
+```
+
+
+![rviz_autoware](./images/image.png)
