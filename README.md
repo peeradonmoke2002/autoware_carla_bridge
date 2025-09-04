@@ -56,8 +56,6 @@ launch_arguments = {
     'town': 'Town01',      # Change this to your CARLA simulator town
 }
 ```
-Optionally, you can change the default RViz configuration file in the same file.
-
 Then launch the file using `ros2 launch` command.
 
 ``` bash
@@ -71,4 +69,4 @@ ros2 launch autoware_carla_bridge autoware_carlar_bridge.launch.py
 ```
 
 
-![rviz_autoware](./images/image.png)
+![rviz_autoware](./images/rviz_autoware.png)
