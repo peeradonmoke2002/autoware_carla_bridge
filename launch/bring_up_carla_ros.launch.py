@@ -98,13 +98,9 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                # ('/carla/ego_vehicle/rgb_front/camera_info',
-                #  '/sensing/camera/traffic_light/camera_info'),
-                # ('/carla/ego_vehicle/rgb_front/image', '/sensing/camera/traffic_light/image_raw'),
-                ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
+                # ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
                 ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),
-                ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
-                # ('/carla/ego_vehicle/gnss','/sensing/gnss/pose_with_covariance')
+                ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
             ],
         ),
         launch_ros.actions.Node(

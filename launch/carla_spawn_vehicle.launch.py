@@ -38,24 +38,8 @@ def generate_launch_description():
             'control_id': 'control'
         }.items()
     )
-
-    carla_spawn_service = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/carla_service.launch.py')
-        )
-    )
-    
-    raw_vehicle_converter = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/raw_vehicle_converter.launch.py')
-        )
-    )
-
     ld = LaunchDescription()
     ld.add_action(spawn_entity)
     ld.add_action(init_pose)
-    ld.add_action(carla_spawn_service)   
-    ld.add_action(raw_vehicle_converter) 
+
     return ld

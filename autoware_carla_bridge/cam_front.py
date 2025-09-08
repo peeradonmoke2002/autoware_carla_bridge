@@ -61,7 +61,7 @@ class CamFront(object):
         out.header.frame_id = "traffic_light_left_camera/camera_optical_link"
         out.width = self.input_camera_info.width
         out.height = self.input_camera_info.height
-        out.distortion_model = self.input_camera_info.distortion_model
+        out.distortion_model = "plumb_bob"
         out.d = list(self.input_camera_info.d)
         out.k = list(self.input_camera_info.k)
         out.r = list(self.input_camera_info.r)
@@ -86,8 +86,7 @@ class CamFront(object):
             self.node.get_logger().warn("Transform not available")
             return
         cam_tf_msg.header.stamp = self.node.get_clock().now().to_msg()
-        cam_tf_msg.header.frame_id = "base_link"            
-        cam_tf_msg.child_frame_id = "traffic_light_left_camera/camera_optical_link"      
+        cam_tf_msg.header.frame_id = "traffic_light_left_camera/camera_optical_link"            
         cam_tf_msg.transform.translation = cam_tf_msg.transform.translation
         cam_tf_msg.transform.rotation = cam_tf_msg.transform.rotation
         self.tf_broadcaster.sendTransform(cam_tf_msg)

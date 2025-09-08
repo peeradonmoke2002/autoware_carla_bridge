@@ -44,7 +44,7 @@ class CamView(object):
             return
         out = Image()
         out.header.stamp = self.input_image.header.stamp
-        out.header.frame_id = "view/camera_optical_link"
+        out.header.frame_id = "vehicle_view_camera/camera_optical_link"
         out.height = self.input_image.height
         out.width = self.input_image.width
         out.encoding = self.input_image.encoding
@@ -58,10 +58,10 @@ class CamView(object):
             return
         out = CameraInfo()
         out.header.stamp = self.input_camera_info.header.stamp
-        out.header.frame_id = "view/camera_optical_link"
+        out.header.frame_id = "vehicle_view_camera/camera_optical_link"
         out.width = self.input_camera_info.width
         out.height = self.input_camera_info.height
-        out.distortion_model = self.input_camera_info.distortion_model
+        out.distortion_model = "plumb_bob"
         out.d = list(self.input_camera_info.d)
         out.k = list(self.input_camera_info.k)
         out.r = list(self.input_camera_info.r)
@@ -87,7 +87,7 @@ class CamView(object):
             return
         cam_tf_msg.header.stamp = self.node.get_clock().now().to_msg()
         cam_tf_msg.header.frame_id = "base_link"
-        cam_tf_msg.child_frame_id = "view/camera_optical_link"
+        cam_tf_msg.child_frame_id = "vehicle_view_camera/camera_optical_link"
         cam_tf_msg.transform.translation = cam_tf_msg.transform.translation
         cam_tf_msg.transform.rotation = cam_tf_msg.transform.rotation
         self.tf_broadcaster.sendTransform(cam_tf_msg)

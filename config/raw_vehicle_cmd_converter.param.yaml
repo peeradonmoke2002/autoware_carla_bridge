@@ -1,8 +1,5 @@
 /**:
   ros__parameters:
-    csv_path_accel_map: "$(find-pkg-share autoware_carla_bridge)/data/carla_tesla_model3/accel_map.csv"
-    csv_path_brake_map: "$(find-pkg-share autoware_carla_bridge)/data/carla_tesla_model3/brake_map.csv"
-    csv_path_steer_map: "$(find-pkg-share autoware_carla_bridge)/data/carla_tesla_model3/steer_map.csv"
     convert_accel_cmd: true
     convert_brake_cmd: true
     convert_steer_cmd: false
