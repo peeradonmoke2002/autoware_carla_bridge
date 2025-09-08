@@ -12,6 +12,14 @@
 cd ~/av_ws/src
 git clone https://github.com/peeradonmoke2002/autoware_carla_bridge.git
 ```
+
+and also clone the `carla_ros` package this is need my package due to have changes to make compatible with Autoware.
+
+``` bash
+git clone https://github.com/peeradonmoke2002/carla_ros.git
+```
+
+
 2. Install dependencies
 ```bash
 sudo apt update && sudo apt upgrade
@@ -49,7 +57,7 @@ edit the default_value of `host`, `port` and `town` arguments if needed.
 ```python
 launch_arguments = {
     'use_sim_time': 'True',
-    'host': '10.61.2.24',  # Change this to your CARLA simulator IP address
+    'host': 'localhost',  # Change this to your CARLA simulator IP address
     'port': '2000',        # Change this to your CARLA simulator port number
     'timeout': '10.0',
     'synchronous_mode': 'True',
@@ -59,14 +67,16 @@ launch_arguments = {
 Then launch the file using `ros2 launch` command.
 
 ``` bash
-ros2 launch autoware_carla_bridge bring_up.launch.py
+ros2 launch autoware_carla_bridge bring_up_carla.launch.py
 ```
 
-3. Launch `autoware_carlar_bridge.launch.py`
+3. Launch `autoware_carla_bridge.launch.py`
 
 ```bash
-ros2 launch autoware_carla_bridge autoware_carlar_bridge.launch.py
+ros2 launch autoware_carla_bridge autoware_carla_bridge.launch.py
 ```
+
+wait a few seconds to make sure all nodes are up and running. and done intitialization position of the vehicle in Autoware.
 
 
 ![rviz_autoware](./images/rviz_autoware.png)
