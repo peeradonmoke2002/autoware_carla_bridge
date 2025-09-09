@@ -18,7 +18,7 @@ def generate_launch_description():
     vehicle = IncludeLaunchDescription(
         XMLLaunchDescriptionSource(
             os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/autoware.launch.xml')
+                'autoware_carla_bridge'), 'launch/e2e_simulator.launch.xml')
         )
     )
 

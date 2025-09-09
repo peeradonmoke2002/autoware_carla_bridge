@@ -98,9 +98,9 @@ def generate_launch_description():
                 }
             ],
             remappings=[
-                # ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
                 ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),
                 ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
+                # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
             ],
         ),
         launch_ros.actions.Node(
