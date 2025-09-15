@@ -28,9 +28,9 @@ class AutowareCarlaBridge(Node):
         self.gnss_cov = GnssCov(self)
         self.cam = CamFront(self)
         self.cam_view = CamView(self)
-        hz = 1/500 # 500 hz
-        self.create_timer(hz, self.timer_callback) 
-        
+        hz = 0.01  # 20Hz
+        self.create_timer(hz, self.timer_callback)
+
     def timer_callback(self):
         self.actuation_status.update()
         self.control_command.update()

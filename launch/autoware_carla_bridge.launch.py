@@ -7,9 +7,10 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    pkg = "autoware_carla_bridge"
 
     autoware_carlar_bridge = Node(
-        package='autoware_carla_bridge',
+        package= pkg,
         executable='bridge.py',
         name='bridge',
         output='screen',
@@ -39,11 +40,10 @@ def generate_launch_description():
         ],
     )
 
-    # Include Autoware stack but **disable** physical sensing drivers in CARLA
     autoware_vehicle = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory('autoware_carla_bridge'),
+                get_package_share_directory(pkg),
                 'launch', 'autoware_vehicle.launch.py'
             )
         )

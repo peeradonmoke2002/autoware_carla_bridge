@@ -7,30 +7,30 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def generate_launch_description():
+    pkg = "autoware_carla_bridge"
 
     carla_spawn_service = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/carla_service.launch.py')
+            os.path.join(get_package_share_directory(pkg), 
+                         'launch/carla_service.launch.py')
         )
     )
 
-    vehicle = IncludeLaunchDescription(
+    autoware_core = IncludeLaunchDescription(
         XMLLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/e2e_simulator.launch.xml')
+            os.path.join(get_package_share_directory(pkg), 
+                         'launch/e2e_simulator.launch.xml')
         )
     )
 
     raw_vehicle = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(
-                'autoware_carla_bridge'), 'launch/raw_vehicle_converter.launch.py')
+            os.path.join(get_package_share_directory(pkg), 
+                         'launch/raw_vehicle_converter.launch.py')
         )
     )
-
     ld = LaunchDescription()
     ld.add_action(carla_spawn_service)
-    ld.add_action(vehicle)
+    ld.add_action(autoware_core)
     ld.add_action(raw_vehicle)
     return ld
