@@ -155,4 +155,6 @@
       <env name="QT_QPA_PLATFORMTHEME" value="qt5ct"/>
     </node>
   </group>
+
+   <node pkg="topic_tools" exec="relay" name="lidar_concatenation_relay" args="/sensing/lidar/top/pointcloud_before_sync /sensing/lidar/concatenated/pointcloud"/>
 </launch>

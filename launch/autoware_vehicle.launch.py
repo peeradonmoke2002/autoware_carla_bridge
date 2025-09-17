@@ -16,12 +16,12 @@ def generate_launch_description():
         )
     )
 
-    autoware_core = IncludeLaunchDescription(
-        XMLLaunchDescriptionSource(
-            os.path.join(get_package_share_directory(pkg), 
-                         'launch/e2e_simulator.launch.xml')
-        )
-    )
+    # autoware_core = IncludeLaunchDescription(
+    #     XMLLaunchDescriptionSource(
+    #         os.path.join(get_package_share_directory(pkg), 
+    #                      'launch/e2e_simulator.launch.xml')
+    #     )
+    # )
 
     raw_vehicle = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -31,6 +31,6 @@ def generate_launch_description():
     )
     ld = LaunchDescription()
     ld.add_action(carla_spawn_service)
-    ld.add_action(autoware_core)
+    # ld.add_action(autoware_core)
     ld.add_action(raw_vehicle)
     return ld

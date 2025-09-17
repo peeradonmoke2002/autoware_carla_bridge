@@ -40,7 +40,7 @@ colcon build --symlink-install
 1. Launch CARLA simulator on your machine or another machine.
 
 ``` bash
-cd carla/Dist/CARLA_Shipping_0.9.15-330-gdc9e2976d-dirty/LinuxNoEditor
+cd carla/
 ./CarlaUE4.sh -prefernvidia -quality-level=Low -RenderOffScreen
 ```
  
@@ -74,6 +74,12 @@ ros2 launch autoware_carla_bridge bring_up_carla.launch.py
 
 ```bash
 ros2 launch autoware_carla_bridge autoware_carla_bridge.launch.py
+```
+
+4. Launch Autoware Core 
+
+``` bash
+ros2 launch autoware_carla_bridge e2e_simulator.launch.xml
 ```
 
 wait a few seconds to make sure all nodes are up and running. and done intitialization position of the vehicle in Autoware.

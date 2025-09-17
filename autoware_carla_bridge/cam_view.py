@@ -17,14 +17,14 @@ class CamView(object):
 
         # IO
         self._image_subscriber = self.node.create_subscription(
-            Image, '~/input/image_view', self.image_callback, 10)
+            Image, '~/input/image_view', self.image_callback, 1)
         self._image_publisher = self.node.create_publisher(
-            Image, '~/output/image_view', 10)
+            Image, '~/output/image_view', 1)
 
         self._image_info_subscriber = self.node.create_subscription(
-            CameraInfo, '~/input/camera_info_view', self.image_info_callback, 10)
+            CameraInfo, '~/input/camera_info_view', self.image_info_callback, 1)
         self._image_info_publisher = self.node.create_publisher(
-            CameraInfo, '~/output/camera_info_view', 10)
+            CameraInfo, '~/output/camera_info_view', 1)
 
         # TF
         self.tf_buffer = Buffer()

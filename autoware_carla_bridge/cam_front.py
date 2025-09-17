@@ -17,14 +17,14 @@ class CamFront(object):
 
         # IO
         self._image_subscriber = self.node.create_subscription(
-            Image, '~/input/image', self.image_callback, 10)
+            Image, '~/input/image', self.image_callback, 1)
         self._image_publisher = self.node.create_publisher(
-            Image, '~/output/image', 10)
+            Image, '~/output/image', 1)
 
         self._image_info_subscriber = self.node.create_subscription(
-            CameraInfo, '~/input/camera_info', self.image_info_callback, 10)
+            CameraInfo, '~/input/camera_info', self.image_info_callback, 1)
         self._image_info_publisher = self.node.create_publisher(
-            CameraInfo, '~/output/camera_info', 10)
+            CameraInfo, '~/output/camera_info', 1)
 
         # TF
         self.tf_buffer = Buffer()
@@ -86,7 +86,7 @@ class CamFront(object):
             self.node.get_logger().warn("Transform not available")
             return
         cam_tf_msg.header.stamp = self.node.get_clock().now().to_msg()
-        cam_tf_msg.header.frame_id = "traffic_light_left_camera/camera_optical_link"            
+        cam_tf_msg.header.frame_id = "traffic_light_left_camera/camera_optical_link" 
         cam_tf_msg.transform.translation = cam_tf_msg.transform.translation
         cam_tf_msg.transform.rotation = cam_tf_msg.transform.rotation
         self.tf_broadcaster.sendTransform(cam_tf_msg)

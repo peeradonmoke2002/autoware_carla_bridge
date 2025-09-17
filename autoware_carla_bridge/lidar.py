@@ -3,7 +3,8 @@
 import numpy as np
 from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
-
+from rclpy.qos import QoSProfile
+from rclpy.qos import ReliabilityPolicy
 
 class Lidar(object):
 
@@ -11,12 +12,18 @@ class Lidar(object):
         self.node = node
         self.input_pointcloud = PointCloud2()
         self._lidar_subscriber = self.node.create_subscription(
-            PointCloud2, '~/input/lidar', self.lidar_callback, 1)
+            PointCloud2, '~/input/lidar', self.lidar_callback, self._create_sensor_qos())
         self._lidar_ex_publisher = self.node.create_publisher(
-            PointCloud2, '~/output/lidar', 1)
+            PointCloud2, '~/output/lidar', self._create_sensor_qos())
 
     def lidar_callback(self, msg: PointCloud2):
         self.input_pointcloud = msg
+
+    def _create_sensor_qos(self):
+        """Create QoS profile for sensor data with BEST_EFFORT reliability."""
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.BEST_EFFORT
+        return qos
 
     def update(self):
         pc_in = self.input_pointcloud
