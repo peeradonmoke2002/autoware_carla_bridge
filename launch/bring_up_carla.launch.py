@@ -42,7 +42,7 @@ def generate_launch_description():
     )
     fixed_delta_seconds = DeclareLaunchArgument(
         'fixed_delta_seconds',
-        default_value='0.05'
+        default_value='0.05' # 20 FPS
     )
     register_all_sensors = DeclareLaunchArgument(
         'register_all_sensors',
@@ -98,7 +98,8 @@ def generate_launch_description():
         ],
             remappings=[
                 ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),
-                # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
+                ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
+                ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
                 # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
             ],
     )

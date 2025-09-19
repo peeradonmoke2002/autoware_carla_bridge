@@ -28,7 +28,6 @@ class ControlCommand(object):
             Odometry, '~/input/odometry',
             self.vel_callback, 1
         )
-        # (สำคัญ) subscribe vehicle info เพื่อดึง steer_curve
         self._veh_info_sub = self.node.create_subscription(
             CarlaEgoVehicleInfo, '~/input/vehicle_info',
             self.steering_curve_callback, 1
@@ -58,9 +57,6 @@ class ControlCommand(object):
             steer_output = self.prev_steer_output + (steer_input - self.prev_steer_output) * (
                 dt / (self.tau + dt)
             )
-            if abs(steer_output) < 0.01:  # 1% deadband
-                steer_output = 0.0
-                
         self.prev_steer_output = steer_output
         self.prev_timestamp = self.timestamp
         return steer_output

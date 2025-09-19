@@ -10,7 +10,7 @@ class LidarExtended(object):
     def __init__(self, node: Node):
         self.node = node
         self.input_pointcloud = PointCloud2()
-        self._has_msg = False  # <-- minimal: know when first msg arrives
+        self._has_msg = False  
         self._lidar_subscriber = self.node.create_subscription(
             PointCloud2, '~/input/lidar_ex', self.lidar_callback, 1)
         self._lidar_ex_publisher = self.node.create_publisher(

@@ -50,19 +50,29 @@ Before launching, you need to set the carla host ip and port to match your CARLA
 
 ``` bash
 cd launch
-code bring_up_carla.launch.py # or use your favorite editor
+code bring_up_carla.launch.py
 ```
 edit the default_value of `host`, `port` and `town` arguments if needed.
 
 ```python
-launch_arguments = {
-    'use_sim_time': 'True',
-    'host': 'localhost',  # Change this to your CARLA simulator IP address
-    'port': '2000',        # Change this to your CARLA simulator port number
-    'timeout': '10.0',
-    'synchronous_mode': 'True',
-    'town': 'Town01',      # Change this to your CARLA simulator town
-}
+    host = DeclareLaunchArgument(
+        'host',
+        default_value='localhost'
+    )
+
+    port = DeclareLaunchArgument(
+        'port',
+        default_value='2000',
+        description='CARLA port'    
+    )
+    town = DeclareLaunchArgument(
+        'town',
+        default_value='Town01'
+    )
+    timeout = DeclareLaunchArgument(
+        'timeout',
+        default_value='10.0'
+    )
 ```
 Then launch the file using `ros2 launch` command.
 
