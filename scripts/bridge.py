@@ -30,7 +30,7 @@ class AutowareCarlaBridge(Node):
         self.cam = CamFront(self)
         self.cam_view = CamView(self)
         # self.lidar = Lidar(self)
-        hz = 0.05  # 20 Hz
+        hz = 0.04  # 25 Hz
         self.create_timer(hz, self.timer_callback)
 
     def timer_callback(self):

@@ -42,7 +42,7 @@ def generate_launch_description():
     )
     fixed_delta_seconds = DeclareLaunchArgument(
         'fixed_delta_seconds',
-        default_value='0.05' # 20 FPS
+        default_value='0.04' # 25 FPS
     )
     register_all_sensors = DeclareLaunchArgument(
         'register_all_sensors',
