@@ -28,6 +28,7 @@ def generate_launch_description():
                 ('~/input/camera_info_view', '/carla/ego_vehicle/rgb_view/camera_info'),
                 ('~/input/gnss_cov', '/carla/ego_vehicle/odometry'),
                 ('~/input/vehicle_info', '/carla/ego_vehicle/vehicle_info'),
+                ('~/input/lidar', '/carla/ego_vehicle/lidar'),
                 ('~/output/gear_status', '/vehicle/status/gear_status'),
                 ('~/output/velocity_status', '/vehicle/status/velocity_status'),
                 ('~/output/steering_status', '/vehicle/status/steering_status'),
@@ -38,6 +39,7 @@ def generate_launch_description():
                 ('~/output/camera_info', '/sensing/camera/traffic_light/camera_info'),
                 ('~/output/image_view', '/sensing/camera/view/rgb_view'),
                 ('~/output/camera_info_view', '/sensing/camera/view/camera_info_view'), 
+                ('~/output/lidar', '/sensing/lidar/top/pointcloud_before_sync')
         ],
     )
 

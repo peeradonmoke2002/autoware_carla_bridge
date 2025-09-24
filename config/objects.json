@@ -43,8 +43,9 @@
                     "points_per_second": 300000,
                     "upper_fov": 10.0,
                     "lower_fov": -30.0,
-                    "rotation_frequency": 25.0,
-                    "noise_stddev": 0.0
+                    "rotation_frequency": 30.0,
+                    "noise_stddev": 0.0,
+                    "sensor_tick": 0.0
                 },
                 {
                     "type": "sensor.other.gnss",

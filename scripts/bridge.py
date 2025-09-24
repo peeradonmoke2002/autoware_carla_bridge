@@ -29,8 +29,8 @@ class AutowareCarlaBridge(Node):
         self.gnss_cov = GnssCov(self)
         self.cam = CamFront(self)
         self.cam_view = CamView(self)
-        # self.lidar = Lidar(self)
-        hz = 0.04  # 25 Hz
+        self.lidar = Lidar(self)
+        hz = 0.0333  # 30 Hz
         self.create_timer(hz, self.timer_callback)
 
     def timer_callback(self):
@@ -43,7 +43,7 @@ class AutowareCarlaBridge(Node):
         self.gnss_cov.update()
         self.cam.update()
         self.cam_view.update()
-        # self.lidar.update()
+        self.lidar.update()
         
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")
