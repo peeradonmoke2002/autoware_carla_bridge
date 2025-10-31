@@ -6,7 +6,7 @@ from carla_msgs.msg import CarlaEgoVehicleControl
 from carla_msgs.msg import CarlaEgoVehicleInfo
 import numpy as np
 from nav_msgs.msg import Odometry
-import csv
+
 
 class ControlCommand(object):
     def __init__(self, node: Node):
