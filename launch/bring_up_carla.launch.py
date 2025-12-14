@@ -157,6 +157,6 @@ def generate_launch_description():
     ld.add_action(imu_transform)
     ld.add_action(carla_bridge)
     ld.add_action(spawn_entity)
-    ld.add_action(manual_control)
+    # ld.add_action(manual_control)
     
     return ld
