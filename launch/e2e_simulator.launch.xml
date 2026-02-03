@@ -6,7 +6,7 @@
   <arg name="vehicle_model" default="carla_tesla" description="vehicle model name"/>
   <arg name="sensor_model" default="awsim_sensor_kit" description="sensor model name"/>
   <arg name="data_path" default="$(env HOME)/autoware_data" description="packages data and artifacts directory path"/>
-  <arg name="simulator_type" default="awsim" description="select the simulator type ('awsim' or 'carla')"/>
+  <arg name="simulator_type" default="carla" description="select the simulator type ('awsim' or 'carla')"/>
 
   <!-- launch module preset -->
   <arg name="planning_module_preset" default="default" description="planning module preset"/>
@@ -26,6 +26,7 @@
   <arg name="lanelet2_map_file" default="lanelet2_map.osm" description="lanelet2 map file name"/>
   <arg name="pointcloud_map_file" default="pointcloud_map.pcd" description="pointcloud map file name"/>
   <!-- Perception -->
+  <arg name="perception_mode" default="camera_lidar_fusion" description="perception mode for CARLA: camera_lidar_fusion, lidar_radar_fusion, lidar, radar"/>
   <arg name="traffic_light_namespace" default="[traffic_light]" description="traffic light recognition namespace"/>
   <!-- Control -->
   <!-- Vehicle -->
@@ -63,6 +64,7 @@
       <arg name="launch_control" value="$(var control)"/>
       <!-- Global parameters -->
       <arg name="use_sim_time" value="$(var use_sim_time)"/>
+      <arg name="is_simulation" value="true"/>
       <!-- Vehicle -->
       <arg name="launch_vehicle_interface" value="$(var launch_vehicle_interface)"/>
       <!-- Map -->
@@ -75,6 +77,7 @@
       <!-- Sensing -->
       <arg name="launch_sensing_driver" value="$(var launch_sensing_driver)"/>
       <!-- Perception-->
+      <arg name="perception_mode" value="$(var perception_mode)"/>
       <arg name="traffic_light_recognition/use_high_accuracy_detection" value="false"/>
       <arg name="traffic_light_recognition/camera_namespaces" value="$(var traffic_light_namespace)"/>
       <!-- Tools -->

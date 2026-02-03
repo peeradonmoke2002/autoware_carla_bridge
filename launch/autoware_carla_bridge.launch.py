@@ -39,7 +39,9 @@ def generate_launch_description():
                 ('~/output/camera_info', '/sensing/camera/traffic_light/camera_info'),
                 ('~/output/image_view', '/sensing/camera/view/rgb_view'),
                 ('~/output/camera_info_view', '/sensing/camera/view/camera_info_view'), 
-                ('~/output/lidar', '/sensing/lidar/top/pointcloud_before_sync')
+                ('~/output/lidar', '/sensing/lidar/top/pointcloud_before_sync'),
+                ('~/output/camera0/image_rect_color', '/sensing/camera/camera0/image_rect_color'),
+                ('~/output/camera0/camera_info', '/sensing/camera/camera0/camera_info'),
         ],
     )
 

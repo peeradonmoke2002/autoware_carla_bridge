@@ -11,6 +11,7 @@ from autoware_carla_bridge.steering_status import SteeringStatus
 from autoware_carla_bridge.velocity_state_report import VelocityStateReport
 from autoware_carla_bridge.gnss_pose_cov import GnssCov
 from autoware_carla_bridge.cam_front import CamFront
+from autoware_carla_bridge.cam_camera0 import CamCamera0
 from autoware_carla_bridge.cam_view import CamView
 from autoware_carla_bridge.lidar import Lidar
 
@@ -28,12 +29,14 @@ class AutowareCarlaBridge(Node):
         self.velocity_state_report = VelocityStateReport(self)
         self.gnss_cov = GnssCov(self)
         self.cam = CamFront(self)
+        self.cam_camera0 = CamCamera0(self)
         self.cam_view = CamView(self)
         self.lidar = Lidar(self)
         hz = 0.0333  # 30 Hz
         self.create_timer(hz, self.timer_callback)
 
     def timer_callback(self):
+
         self.actuation_status.update()
         self.control_command.update()
         self.control_mode.update()
@@ -42,6 +45,7 @@ class AutowareCarlaBridge(Node):
         self.velocity_state_report.update()
         self.gnss_cov.update()
         self.cam.update()
+        self.cam_camera0.update()
         self.cam_view.update()
         self.lidar.update()
         
