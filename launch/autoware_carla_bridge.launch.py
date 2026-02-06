@@ -29,6 +29,8 @@ def generate_launch_description():
                 ('~/input/gnss_cov', '/carla/ego_vehicle/odometry'),
                 ('~/input/vehicle_info', '/carla/ego_vehicle/vehicle_info'),
                 ('~/input/lidar', '/carla/ego_vehicle/lidar'),
+                ('~/input/gt_objects', '/carla/ego_vehicle/objects'),
+                ('~/input/pointcloud', '/carla/ego_vehicle/lidar'),
                 ('~/output/gear_status', '/vehicle/status/gear_status'),
                 ('~/output/velocity_status', '/vehicle/status/velocity_status'),
                 ('~/output/steering_status', '/vehicle/status/steering_status'),
@@ -42,6 +44,7 @@ def generate_launch_description():
                 ('~/output/lidar', '/sensing/lidar/top/pointcloud_before_sync'),
                 ('~/output/camera0/image_rect_color', '/sensing/camera/camera0/image_rect_color'),
                 ('~/output/camera0/camera_info', '/sensing/camera/camera0/camera_info'),
+                ('~/output/detected_objects', '/perception/object_recognition/detection/objects'),
         ],
     )
 

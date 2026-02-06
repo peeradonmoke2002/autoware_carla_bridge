@@ -103,13 +103,12 @@ def generate_launch_description():
                 # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
             ],
     )
-    
     lidar_transform = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
             name='velodyne_top',
             output='screen',
-            arguments=['0', '0', '0', '-1.5386', '-0.015', '0.001', 'velodyne_top', 'velodyne_top_changed']
+            arguments=['0', '0', '1', '-1.5386', '-0.015', '0.001', 'velodyne_top', 'velodyne_top_changed']
     )
 
     imu_transform = Node(
@@ -117,9 +116,8 @@ def generate_launch_description():
             executable='static_transform_publisher',
             name='imu',
             output='screen',
-            arguments=['0', '0', '0', '-3.10519265', '-0.015', '-3.14059265359', 'tamagawa/imu_link', 'tamagawa/imu_link_changed']
+            arguments=['0', '0', '1', '-3.10519265', '-0.015', '-3.14059265359', 'tamagawa/imu_link', 'tamagawa/imu_link_changed']
     )
-    
 
     spawn_entity = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

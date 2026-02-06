@@ -14,6 +14,7 @@ from autoware_carla_bridge.cam_front import CamFront
 from autoware_carla_bridge.cam_camera0 import CamCamera0
 from autoware_carla_bridge.cam_view import CamView
 from autoware_carla_bridge.lidar import Lidar
+from autoware_carla_bridge.gt_detection import GroundTruthDetection
 
 
 class AutowareCarlaBridge(Node):
@@ -32,6 +33,7 @@ class AutowareCarlaBridge(Node):
         self.cam_camera0 = CamCamera0(self)
         self.cam_view = CamView(self)
         self.lidar = Lidar(self)
+        self.gt_detection = GroundTruthDetection(self)
         hz = 0.0333  # 30 Hz
         self.create_timer(hz, self.timer_callback)
 
@@ -48,6 +50,7 @@ class AutowareCarlaBridge(Node):
         self.cam_camera0.update()
         self.cam_view.update()
         self.lidar.update()
+        self.gt_detection.update()
         
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")
