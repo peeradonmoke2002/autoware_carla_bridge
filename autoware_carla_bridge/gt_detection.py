@@ -1,11 +1,4 @@
 #!/usr/bin/python3
-# gt_detection.py
-#
-# Ground truth detection bridge: converts CARLA ground truth objects to
-# Autoware DetectedObjects, filtered by minimum LiDAR point count per class.
-# This provides stable detections for the planning module by only publishing
-# objects that are actually visible (have enough LiDAR returns).
-
 import numpy as np
 import rclpy
 from rclpy.node import Node
@@ -31,19 +24,6 @@ from geometry_msgs.msg import (
 
 
 class GroundTruthDetection(object):
-    """Bridge from CARLA ground truth objects to Autoware DetectedObjects.
-
-    Subscribes to:
-      - ~/input/gt_objects   : derived_object_msgs/ObjectArray (CARLA ground truth)
-      - ~/input/pointcloud   : sensor_msgs/PointCloud2 (LiDAR for point counting)
-
-    Uses TF to get transforms:
-      - map -> lidar (for transforming objects to lidar frame)
-      - map -> base_link (for publishing detections in base_link frame)
-
-    Publishes to:
-      - ~/output/detected_objects : autoware_perception_msgs/DetectedObjects
-    """
 
     # derived_object_msgs classification -> autoware ObjectClassification label
     CLASSIFICATION_MAP = {
@@ -155,10 +135,6 @@ class GroundTruthDetection(object):
             aw*bw - ax*bx - ay*by - az*bz,
         )
 
-    # ------------------------------------------------------------------
-    # Point cloud helpers
-    # ------------------------------------------------------------------
-
     @staticmethod
     def _extract_xyz(pc_msg):
         """Extract (N, 3) float32 xyz array from PointCloud2."""
@@ -178,11 +154,7 @@ class GroundTruthDetection(object):
         # Filter NaN / inf
         valid = np.isfinite(pts).all(axis=1)
         return pts[valid]
-
-    # ------------------------------------------------------------------
-    # Core: count LiDAR points inside an oriented bounding box
-    # ------------------------------------------------------------------
-
+    
     @staticmethod
     def _count_points_in_obb(points, center, R_box_inv, half_ext):
         """Count points inside an oriented bounding box.
@@ -214,11 +186,7 @@ class GroundTruthDetection(object):
             (np.abs(local[:, 2]) <= half_ext[2])
         )
         return int(np.sum(inside))
-
-    # ------------------------------------------------------------------
-    # Conversion: derived_object_msgs/Object -> DetectedObject
-    # ------------------------------------------------------------------
-
+    
     def _to_detected_object(self, obj, aw_label, tf_map_to_base):
         """Convert a CARLA ground-truth object to an Autoware DetectedObject
         in the base_link frame using TF transform."""
@@ -232,8 +200,6 @@ class GroundTruthDetection(object):
         cls.probability = 1.0
         det.classification = [cls]
 
-        # --- kinematics (pose in base_link using TF) ---
-        # CARLA pose convention: vehicles at ground, pedestrians at center
         height = obj.shape.dimensions[2]
         is_pedestrian = (aw_label == ObjectClassification.PEDESTRIAN)
         z_offset = 0.0 if is_pedestrian else height / 2.0
@@ -288,10 +254,6 @@ class GroundTruthDetection(object):
         det.shape = shape
 
         return det
-
-    # ------------------------------------------------------------------
-    # Main update (called at 30 Hz from bridge timer)
-    # ------------------------------------------------------------------
 
     def update(self):
         if self.objects_msg is None or self.pointcloud_msg is None:
