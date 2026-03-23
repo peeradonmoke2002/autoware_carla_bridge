@@ -36,12 +36,9 @@ class GroundTruthDetection(object):
     }
 
     # Minimum LiDAR point thresholds per Autoware classification
+    # Thesis focus: CAR + PEDESTRIAN only
     MIN_POINTS_DEFAULT = {
-        ObjectClassification.CAR: 20,
-        ObjectClassification.TRUCK: 20,
-        ObjectClassification.BUS: 20,
-        ObjectClassification.MOTORCYCLE: 10,
-        ObjectClassification.BICYCLE: 10,
+        ObjectClassification.CAR: 10,
         ObjectClassification.PEDESTRIAN: 5,
     }
 
