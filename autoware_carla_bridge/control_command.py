@@ -92,19 +92,17 @@ class ControlCommand(object):
         self.timestamp = now.sec + now.nanosec * 1e-9
         throttle = self.in_cmd.actuation.accel_cmd
         
-        if hasattr(self, 'current_vel') and abs(self.current_vel.x) < 0.1:  # < 0.1 m/s
+        if self.current_vel is not None and abs(self.current_vel.x) < 0.1:  # < 0.1 m/s
             steer = 0.0
             self.prev_steer_output = 0.0  # Reset filter memory
         else:
-            # Your existing steering calculation
-            if not hasattr(self, 'steer_curve') or not self.steer_curve or not hasattr(self, 'current_vel'):
+            # steer_cmd is already normalized [-1, 1] (convert_steer_cmd: false, max_steer: 1.0)
+            # CARLA handles speed-dependent steering internally — no need to multiply by max_steer_ratio
+            if not self.steer_curve or self.current_vel is None:
                 steer = -self.in_cmd.actuation.steer_cmd
             else:
                 try:
-                    max_steer_ratio = np.interp(
-                        abs(self.current_vel.x), [v.x for v in self.steer_curve], [v.y for v in self.steer_curve]
-                    )
-                    steer = self.first_order_steering(-self.in_cmd.actuation.steer_cmd) * max_steer_ratio
+                    steer = self.first_order_steering(-self.in_cmd.actuation.steer_cmd)
                 except Exception as e:
                     self.node.get_logger().error(f"Error calculating steering: {e}")
                     steer = -self.in_cmd.actuation.steer_cmd

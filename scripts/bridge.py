@@ -11,7 +11,6 @@ from autoware_carla_bridge.steering_status import SteeringStatus
 from autoware_carla_bridge.velocity_state_report import VelocityStateReport
 from autoware_carla_bridge.gnss_pose_cov import GnssCov
 from autoware_carla_bridge.cam_front import CamFront
-# from autoware_carla_bridge.cam_camera0 import CamCamera0
 from autoware_carla_bridge.cam_view import CamView
 from autoware_carla_bridge.lidar_ex import LidarExtended
 # from autoware_carla_bridge.lidar import Lidar
