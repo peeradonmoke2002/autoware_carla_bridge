@@ -259,7 +259,7 @@ class GroundTruthDetection(object):
         # Get the lidar frame from point cloud header
         lidar_frame = self.pointcloud_msg.header.frame_id
         if not lidar_frame:
-            lidar_frame = "velodyne_top_changed"  # fallback
+            lidar_frame = "velodyne_top"  # fallback
 
         # Extract lidar points (in lidar frame)
         pts_lidar = self._extract_xyz(self.pointcloud_msg)

@@ -96,12 +96,12 @@ def generate_launch_description():
                 'ego_vehicle_role_name': LaunchConfiguration('ego_vehicle_role_name')
             }
         ],
-            remappings=[
-                ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),
-                # ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
-                # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
-                # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
-            ],
+            # remappings=[
+            #     # ('/carla/ego_vehicle/imu', '/sensing/imu/tamagawa/imu_raw'),  # handled by autoware_carla_bridge imu.py (sets correct frame_id)
+            #     # ('/carla/ego_vehicle/gnss', '/sensing/gnss/ublox/nav_sat_fix'),
+            #     # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_before_sync')
+            #     # ('/carla/ego_vehicle/lidar', '/sensing/lidar/top/pointcloud_raw')
+            # ],
     )
     lidar_transform = Node(
             package='tf2_ros',
@@ -117,6 +117,22 @@ def generate_launch_description():
             name='imu',
             output='screen',
             arguments=['0', '0', '1', '-3.10519265', '-0.015', '-3.14059265359', 'tamagawa/imu_link', 'tamagawa/imu_link_changed']
+    )
+
+    traffic_light_image_relay = Node(
+        package='topic_tools',
+        executable='relay',
+        name='traffic_light_image_relay',
+        arguments=['/sensing/camera/CAM_FRONT/image_raw', '/sensing/camera/traffic_light/image_raw'],
+        parameters=[{'use_sim_time': True}],
+    )
+
+    traffic_light_camera_info_relay = Node(
+        package='topic_tools',
+        executable='relay',
+        name='traffic_light_camera_info_relay',
+        arguments=['/sensing/camera/CAM_FRONT/camera_info', '/sensing/camera/traffic_light/camera_info'],
+        parameters=[{'use_sim_time': True}],
     )
 
     spawn_entity = IncludeLaunchDescription(
@@ -151,8 +167,10 @@ def generate_launch_description():
     ld.add_action(town)
     ld.add_action(register_all_sensors)
     ld.add_action(ego_vehicle_role_name)
-    ld.add_action(lidar_transform)
-    ld.add_action(imu_transform)
+    # ld.add_action(lidar_transform)
+    # ld.add_action(imu_transform)
+    ld.add_action(traffic_light_image_relay)
+    ld.add_action(traffic_light_camera_info_relay)
     ld.add_action(carla_bridge)
     ld.add_action(spawn_entity)
     # ld.add_action(manual_control)

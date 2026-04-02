@@ -2,6 +2,7 @@
 # lidar.py
 import numpy as np
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import PointCloud2, PointField
 
 
@@ -9,29 +10,21 @@ class LidarExtended(object):
 
     def __init__(self, node: Node):
         self.node = node
-        self.input_pointcloud = PointCloud2()
-        self._has_msg = False  
+        sensor_qos = QoSProfile(depth=10)
+        sensor_qos.reliability = ReliabilityPolicy.BEST_EFFORT
         self._lidar_subscriber = self.node.create_subscription(
-            PointCloud2, '~/input/lidar_ex', self.lidar_callback, 1)
+            PointCloud2, '~/input/lidar', self.lidar_callback, sensor_qos)
         self._lidar_ex_publisher = self.node.create_publisher(
-            PointCloud2, '~/output/lidar_ex', 1)
+            PointCloud2, '~/output/lidar', sensor_qos)
 
     def lidar_callback(self, msg: PointCloud2):
-        self.input_pointcloud = msg
-        self._has_msg = True
-
-    def update(self):
-        if (
-            not self._has_msg
-            or not self.input_pointcloud.fields
-            or not self.input_pointcloud.data
-        ):
+        if not msg.fields or not msg.data:
             return
+        self._lidar_ex_publisher.publish(self._convert(msg))
 
-        pc_in = self.input_pointcloud
-
+    def _convert(self, pc_in: PointCloud2) -> PointCloud2:
         pc_out = PointCloud2()
-        pc_out.header.frame_id = pc_in.header.frame_id
+        pc_out.header.frame_id = "velodyne_top"
         pc_out.header.stamp = pc_in.header.stamp
         pc_out.height = pc_in.height
         pc_out.width = pc_in.width
@@ -79,7 +72,10 @@ class LidarExtended(object):
             out['channel'] = 0
 
         pc_out.data = out.tobytes('C')
-        self._lidar_ex_publisher.publish(pc_out)
+        return pc_out
+
+    def update(self):
+        pass  # conversion and publish happen directly in lidar_callback
 
 
     def _add_field(self, fields, new_field):

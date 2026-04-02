@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # cam_camera0.py - Camera publisher for YOLOX object detection (camera0)
+import math
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
@@ -7,6 +8,28 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy
 from tf2_ros import Buffer, TransformListener, TransformException, TransformBroadcaster, ConnectivityException, ExtrapolationException
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import Image, CameraInfo
+
+def _compute_camera_info(ci_in, frame_id, fov_deg=90.0):
+    """Compute camera intrinsics from FOV and image dimensions (C++ reference method)."""
+    w = ci_in.width
+    h = ci_in.height
+    cx = w / 2.0
+    cy = h / 2.0
+    fx = w / (2.0 * math.tan(math.radians(fov_deg / 2.0)))
+    fy = fx
+    from sensor_msgs.msg import CameraInfo
+    out = CameraInfo()
+    out.header.stamp = ci_in.header.stamp
+    out.header.frame_id = frame_id
+    out.width = w
+    out.height = h
+    out.distortion_model = "plumb_bob"
+    out.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+    out.k = [fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0]
+    out.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    out.p = [fx, 0.0, cx, 0.0, 0.0, fy, cy, 0.0, 0.0, 0.0, 1.0, 0.0]
+    return out
+
 
 class CamCamera0(object):
     def __init__(self, node: Node):
@@ -65,19 +88,11 @@ class CamCamera0(object):
     def image_info_update(self):
         if self.input_camera_info is None:
             return
-        out = CameraInfo()
-        # Use synchronized timestamp for camera-lidar fusion
-        out.header.stamp = self.input_camera_info.header.stamp
-        out.header.frame_id = "camera0/camera_optical_link"
-        out.width = self.input_camera_info.width
-        out.height = self.input_camera_info.height
-        out.distortion_model = "plumb_bob"
-        out.d = list(self.input_camera_info.d)
-        out.k = list(self.input_camera_info.k)
-        out.r = list(self.input_camera_info.r)
-        out.p = list(self.input_camera_info.p)
-        out.binning_x = self.input_camera_info.binning_x
-        out.binning_y = self.input_camera_info.binning_y
+        out = _compute_camera_info(
+            self.input_camera_info,
+            "camera0/camera_optical_link",
+            fov_deg=90.0
+        )
         self._image_info_publisher.publish(out)
 
     def update(self):
