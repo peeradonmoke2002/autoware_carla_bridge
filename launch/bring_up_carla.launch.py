@@ -22,7 +22,7 @@ def generate_launch_description():
     )
     town = DeclareLaunchArgument(
         'town',
-        default_value='Town01'
+        default_value='Town10HD_Opt'
     )
     timeout = DeclareLaunchArgument(
         'timeout',

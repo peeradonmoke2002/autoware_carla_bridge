@@ -11,7 +11,7 @@ def generate_launch_description():
     
     object_file = os.path.join(
         get_package_share_directory(pkg),
-        'config','objects.json'
+        'config','objects_town10.json'
     )
 
     spawn_entity = IncludeLaunchDescription(
@@ -20,7 +20,7 @@ def generate_launch_description():
                 'carla_spawn_objects'), 'carla_spawn_objects.launch.py')
         ),
         launch_arguments={
-            'object_definition_file': object_file,
+            'objects_definition_file': object_file,
             'spawn_sensors_only': 'False',
             'spawn_point_ego_vehicle': 'None',
         }.items()

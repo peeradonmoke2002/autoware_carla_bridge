@@ -2,7 +2,7 @@
 <launch>
   <!-- Essential parameters -->
   <arg name="use_sim_time" default="true" description="use simulation time"/>
-  <arg name="map_path" default="$(env HOME)/autoware_map/Town01" description="point cloud and lanelet2 map directory path"/>
+  <arg name="map_path" default="$(env HOME)/autoware_map/Town10HD" description="point cloud and lanelet2 map directory path"/>
   <arg name="vehicle_model" default="carla_tesla" description="vehicle model name"/>
   <arg name="sensor_model" default="awsim_sensor_kit" description="sensor model name"/>
   <arg name="data_path" default="$(env HOME)/autoware_data" description="packages data and artifacts directory path"/>
