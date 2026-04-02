@@ -31,7 +31,6 @@ class AutowareCarlaBridge(Node):
         self.velocity_state_report = VelocityStateReport(self)
         self.gnss_cov = GnssCov(self)
         self.cam = CamFront(self)
-        # self.cam_camera0 = CamCamera0(self)
         self.cam_view = CamView(self)
         self.lidar_ex = LidarExtended(self)
         # self.lidar = Lidar(self)
@@ -51,17 +50,11 @@ class AutowareCarlaBridge(Node):
         self.velocity_state_report.update()
         self.gnss_cov.update()
         self.cam.update()
-        # self.cam_camera0.update()
         self.cam_view.update()
         self.lidar_ex.update()
         self.imu.update()
         self.gt_detection.update()
-        # Only engage once CARLA is actually sending data (GNSS stamp non-zero)
-        # if self.gnss_cov.input_gnss.header.stamp.sec > 0:
-        #     engage_msg = Engage()
-        #     engage_msg.engage = True
-        #     self._engage_pub.publish(engage_msg)
-        
+
     def destroy_node(self):
         self.get_logger().info("Destroying AutowareCarlaBridge node")
         super().destroy_node()
