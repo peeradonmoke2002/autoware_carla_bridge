@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # imu.py
 from rclpy.node import Node
+from rclpy.qos import ReliabilityPolicy, QoSProfile
 from sensor_msgs.msg import Imu as ImuMsg
 
 
@@ -10,9 +11,15 @@ class Imu(object):
         self.node = node
         self._input_imu = None
         self._subscriber = self.node.create_subscription(
-            ImuMsg, '~/input/imu', self._callback, 10)
+            ImuMsg, '~/input/imu', self._callback, self._create_sensor_qos())
         self._publisher = self.node.create_publisher(
-            ImuMsg, '~/output/imu', 10)
+            ImuMsg, '~/output/imu', self._create_sensor_qos())
+
+    def _create_sensor_qos(self):
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.RELIABLE
+        return qos
+    
 
     def _callback(self, msg: ImuMsg):
         self._input_imu = msg

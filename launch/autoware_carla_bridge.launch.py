@@ -44,8 +44,6 @@ def generate_launch_description():
                 ('~/output/camera_info_view', '/sensing/camera/CAM_VIEW/camera_info'),
                 ('~/output/lidar', '/sensing/lidar/top/pointcloud_before_sync'),
                 ('~/output/imu', '/sensing/imu/tamagawa/imu_raw'),
-                # ('~/output/camera0/image_rect_color', '/sensing/camera/camera0/image_rect_color'),
-                # ('~/output/camera0/camera_info', '/sensing/camera/camera0/camera_info'),
                 ('~/output/detected_objects', '/perception/object_recognition/detection/objects'),
         ],
     )
@@ -59,9 +57,22 @@ def generate_launch_description():
         )
     )
 
+
+    cam_front_republish = Node(
+        package='image_transport',
+        executable='republish',
+        name='cam_front_republish',
+        arguments=['raw', 'compressed'],
+        remappings=[
+            ('in', '/sensing/camera/CAM_FRONT/image_raw'),
+            ('out/compressed', '/sensing/camera/CAM_FRONT/image_raw/compressed'),
+        ]
+    )
+
     ld = LaunchDescription()
     ld.add_action(autoware_carlar_bridge)
     ld.add_action(autoware_vehicle)
+    ld.add_action(cam_front_republish)
     return ld
 
 

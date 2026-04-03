@@ -2,6 +2,7 @@
 # cam_front.py
 import math
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import Image, CameraInfo
 
 _CAM_FRAME = "CAM_FRONT/camera_optical_link"
@@ -36,15 +37,21 @@ class CamFront(object):
         self.input_camera_info = None
 
         self._image_subscriber = self.node.create_subscription(
-            Image, '~/input/image', self.image_callback, 1)
+            Image, '~/input/image', self.image_callback, self._create_sensor_qos())
         self._image_publisher = self.node.create_publisher(
-            Image, '~/output/image', 1)
+            Image, '~/output/image', self._create_sensor_qos())
 
         self._image_info_subscriber = self.node.create_subscription(
-            CameraInfo, '~/input/camera_info', self.image_info_callback, 1)
+            CameraInfo, '~/input/camera_info', self.image_info_callback, self._create_sensor_qos())
         self._image_info_publisher = self.node.create_publisher(
-            CameraInfo, '~/output/camera_info', 1)
+            CameraInfo, '~/output/camera_info', self._create_sensor_qos())
 
+
+    def _create_sensor_qos(self):
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.RELIABLE
+        return qos
+    
     def image_callback(self, msg: Image):
         self.input_image = msg
 

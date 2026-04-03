@@ -3,6 +3,7 @@
 import math
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 
 _CAM_FRAME = "CAM_VIEW/camera_optical_link"
 _CAM_FOV_DEG = 90.0
@@ -36,14 +37,19 @@ class CamView(object):
         self.input_camera_info = None
 
         self._image_subscriber = self.node.create_subscription(
-            Image, '~/input/image_view', self.image_callback, 1)
+            Image, '~/input/image_view', self.image_callback, self._create_sensor_qos())
         self._image_publisher = self.node.create_publisher(
-            Image, '~/output/image_view', 1)
+            Image, '~/output/image_view', self._create_sensor_qos())
 
         self._image_info_subscriber = self.node.create_subscription(
-            CameraInfo, '~/input/camera_info_view', self.image_info_callback, 1)
+            CameraInfo, '~/input/camera_info_view', self.image_info_callback, self._create_sensor_qos())
         self._image_info_publisher = self.node.create_publisher(
-            CameraInfo, '~/output/camera_info_view', 1)
+            CameraInfo, '~/output/camera_info_view', self._create_sensor_qos())
+
+    def _create_sensor_qos(self):
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.RELIABLE
+        return qos
 
     def image_callback(self, msg: Image):
         self.input_image = msg

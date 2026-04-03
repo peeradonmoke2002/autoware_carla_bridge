@@ -10,18 +10,22 @@ class LidarExtended(object):
 
     def __init__(self, node: Node):
         self.node = node
-        sensor_qos = QoSProfile(depth=10)
-        sensor_qos.reliability = ReliabilityPolicy.BEST_EFFORT
         self._lidar_subscriber = self.node.create_subscription(
-            PointCloud2, '~/input/lidar', self.lidar_callback, sensor_qos)
+            PointCloud2, '~/input/lidar', self.lidar_callback, self._create_sensor_qos())
         self._lidar_ex_publisher = self.node.create_publisher(
-            PointCloud2, '~/output/lidar', sensor_qos)
+            PointCloud2, '~/output/lidar', self._create_sensor_qos())
 
     def lidar_callback(self, msg: PointCloud2):
         if not msg.fields or not msg.data:
             return
         self._lidar_ex_publisher.publish(self._convert(msg))
 
+    def _create_sensor_qos(self):
+        """Create QoS profile for sensor data with BEST_EFFORT reliability."""
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.BEST_EFFORT
+        return qos
+    
     def _convert(self, pc_in: PointCloud2) -> PointCloud2:
         pc_out = PointCloud2()
         pc_out.header.frame_id = "velodyne_top"

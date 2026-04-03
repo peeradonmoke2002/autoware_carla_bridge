@@ -5,6 +5,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry
+from rclpy.qos import ReliabilityPolicy, QoSProfile
 
 
 class GnssCov(object):
@@ -14,9 +15,15 @@ class GnssCov(object):
         self.input_gnss = Odometry()
         self._gnss_subscriber = self.node.create_subscription(
             Odometry, '~/input/gnss_cov',
-            self.gnss_callback, 1)
+            self.gnss_callback, self._create_sensor_qos())
         self._gnss_cov_publisher = self.node.create_publisher(
-            PoseWithCovarianceStamped, '~/output/gnss_cov', 1)
+            PoseWithCovarianceStamped, '~/output/gnss_cov', self._create_sensor_qos())
+
+    def _create_sensor_qos(self):
+        qos = QoSProfile(depth=10)
+        qos.reliability = ReliabilityPolicy.RELIABLE
+        return qos
+
 
     def gnss_callback(self, msg: Odometry):
         self.input_gnss = msg
