@@ -69,10 +69,23 @@ def generate_launch_description():
         ]
     )
 
+    cam_view_republish = Node(
+        package='image_transport',
+        executable='republish',
+        name='cam_view_republish',
+        arguments=['raw', 'compressed'],
+        remappings=[
+            ('in', '/sensing/camera/CAM_VIEW/image_raw'),
+            ('out/compressed', '/sensing/camera/CAM_VIEW/image_raw/compressed'),
+        ]
+    )
+
+
     ld = LaunchDescription()
     ld.add_action(autoware_carlar_bridge)
     ld.add_action(autoware_vehicle)
     ld.add_action(cam_front_republish)
+    ld.add_action(cam_view_republish)
     return ld
 
 
