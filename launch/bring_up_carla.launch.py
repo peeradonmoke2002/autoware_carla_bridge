@@ -55,8 +55,7 @@ def generate_launch_description():
     )
     ego_vehicle_role_name = DeclareLaunchArgument(
         'ego_vehicle_role_name',
-        default_value=["hero", "ego_vehicle", "hero0", "hero1", "hero2",
-                       "hero3", "hero4", "hero5", "hero6", "hero7", "hero8", "hero9"]
+        default_value='ego_vehicle'
     )
     
     carla_bridge = Node(
@@ -162,6 +161,19 @@ def generate_launch_description():
             }.items()
     )
 
+    carla_waypoint_publisher = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory(
+                    'carla_waypoint_publisher'), 'carla_waypoint_publisher.launch.py')
+            ),
+            launch_arguments={
+                'host': LaunchConfiguration('host'),
+                'port': LaunchConfiguration('port'),
+                'timeout': LaunchConfiguration('timeout'),
+                'role_name': LaunchConfiguration('ego_vehicle_role_name')
+            }.items()
+    )
+
 
 
     ld = LaunchDescription()
@@ -183,5 +195,5 @@ def generate_launch_description():
     ld.add_action(carla_bridge)
     ld.add_action(spawn_entity)
     # ld.add_action(manual_control)
-    
+    ld.add_action(carla_waypoint_publisher)
     return ld
