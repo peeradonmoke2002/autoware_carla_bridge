@@ -19,6 +19,13 @@ class ControlCommand(object):
         self.steer_curve = None        # expected: list of pairs (speed_mps, steer_ratio)
         self.current_vel = None        # geometry_msgs/Vector3 or None
 
+        # P1: Control timeout tracking
+        self._last_cmd_time = None
+        self._cmd_timeout = 0.5  # seconds
+
+        # P2: Timestamp validation and deduplication
+        self._last_cmd_timestamp = None
+
         # Subscriptions
         self._control_command_subscriber = self.node.create_subscription(
             ActuationCommandStamped, '~/input/actuation',
@@ -80,18 +87,87 @@ class ControlCommand(object):
 
 
     def control_callback(self, msg: ActuationCommandStamped):
-        """Callback for ActuationCommand messages."""
+        """Callback for ActuationCommand messages.
+
+        P2 Implementation: Timestamp validation and deduplication.
+        - Rejects commands that don't match current sim time (stale)
+        - Deduplicates repeated timestamps (multiple deliveries)
+        - Warns on timestamp mismatches
+        """
+        # Extract command timestamp from message header
+        cmd_timestamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+
+        # Get current simulation time
+        now = self.node.get_clock().now().to_msg()
+        sim_time = now.sec + now.nanosec * 1e-9
+
+        # P2a: Check for timestamp mismatch (command is stale or too far in future)
+        time_delta = abs(cmd_timestamp - sim_time)
+        if time_delta > 0.1:  # 100ms threshold
+            self.node.get_logger().warning(
+                f"\033[93mWARNING: Command timestamp mismatch. Expected {sim_time:.3f}s, "
+                f"got {cmd_timestamp:.3f}s (delta: {time_delta:.3f}s). Command ignored.\033[0m"
+            )
+            return
+
+        # P2b: Deduplication check - reject if same timestamp as last command
+        if self._last_cmd_timestamp is not None and abs(self._last_cmd_timestamp - cmd_timestamp) < 1e-6:
+            self.node.get_logger().warning(
+                f"\033[93mWARNING: Received duplicate command with timestamp {cmd_timestamp:.3f}s. Ignoring.\033[0m"
+            )
+            return
+
+        # Update tracking fields
+        self._last_cmd_timestamp = cmd_timestamp
+        self._last_cmd_time = sim_time
         self.in_cmd = msg
 
         
     def update(self):
+        now = self.node.get_clock().now().to_msg()
+        sim_time = now.sec + now.nanosec * 1e-9
+
+        # P3: Scenario reset detection - detect backward clock jump
+        if self.prev_timestamp is not None and sim_time < self.prev_timestamp - 0.1:
+            self.node.get_logger().info(
+                f"Scenario reset detected (clock jumped from {self.prev_timestamp:.3f}s to {sim_time:.3f}s). "
+                "Clearing filter state."
+            )
+            # Reset filter state on scenario restart
+            self.prev_steer_output = 0.0
+            self.prev_timestamp = None
+            self.in_cmd = None
+            self._last_cmd_time = None
+            self._last_cmd_timestamp = None
+
+        self.timestamp = sim_time
+
+        # P1: Control timeout handling
+        # If no command received within timeout window, publish safe brake command
+        if self._last_cmd_time is None or (sim_time - self._last_cmd_time) > self._cmd_timeout:
+            if self._last_cmd_time is not None:
+                self.node.get_logger().warning(
+                    f"\033[93mWARNING: Control command timeout. Last command received "
+                    f"{sim_time - self._last_cmd_time:.3f}s ago. Publishing safe brake.\033[0m"
+                )
+                self._last_cmd_time = None
+                self.in_cmd = None
+
+            # Publish safe command (zero throttle, full brake)
+            msg = CarlaEgoVehicleControl()
+            msg.header.stamp = now
+            msg.throttle = 0.0
+            msg.brake = 1.0
+            msg.steer = 0.0
+            msg.manual_gear_shift = False
+            self._vehicle_control_command_publisher.publish(msg)
+            return
+
         if not hasattr(self, 'in_cmd') or self.in_cmd is None:
             return
-            
-        now = self.node.get_clock().now().to_msg()
-        self.timestamp = now.sec + now.nanosec * 1e-9
+
         throttle = self.in_cmd.actuation.accel_cmd
-        
+
         if self.current_vel is not None and abs(self.current_vel.x) < 0.1:  # < 0.1 m/s
             steer = 0.0
             self.prev_steer_output = 0.0  # Reset filter memory
@@ -106,10 +182,10 @@ class ControlCommand(object):
                 except Exception as e:
                     self.node.get_logger().error(f"Error calculating steering: {e}")
                     steer = -self.in_cmd.actuation.steer_cmd
-    
+
         brake = self.in_cmd.actuation.brake_cmd
         manual_gear_shift = False
-        
+
         msg = CarlaEgoVehicleControl()
         msg.header.stamp = now
         msg.throttle = throttle
